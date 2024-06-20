@@ -10,28 +10,28 @@ import type {
 } from "../types";
 import { pack, unpack } from "msgpackr";
 import { State } from "./state";
-import { Persist } from "./persist";
+// import { Persist } from "./persist";
 
 export class Server<S extends Record<string, unknown>> {
   #state: State<S>;
   #actions: Actions<S>;
-  #persist: Persist<S>;
+  // #persist: Persist<S>;
   #clients: Clients;
   wss: Handler;
 
   constructor(config: ServerConfig<S>) {
     this.#state = new State<S>(config.state);
     this.#actions = config.actions;
-    this.#persist = new Persist("bento.db");
+    // this.#persist = new Persist("bento.db");
     this.#clients = new Map();
 
     // replay patches
-    this.#state.sink = this.#persist.patches();
+    // this.#state.sink = this.#persist.patches();
     this.#state.flush();
 
     // collapse db
-    this.#persist.clear();
-    this.#persist.init(this.#state.snap());
+    // this.#persist.clear();
+    // this.#persist.init(this.#state.snap());
 
     this.wss = {
       message: (ws, msg) => {
@@ -56,6 +56,10 @@ export class Server<S extends Record<string, unknown>> {
     };
   }
 
+  act(action: string, payload: any) {
+    return this.#handleAction(action, payload);
+  }
+
   #handleInit(scopes: string[][], ws: ServerWebSocket) {
     this.#clients.set(ws, scopes || [[]]);
     this.#emit({ ws });
@@ -72,7 +76,7 @@ export class Server<S extends Record<string, unknown>> {
       for (const ws of this.#clients.keys()) {
         this.#emit({ ws, patches: this.#state.sink });
       }
-      this.#persist.append(this.#state.sink);
+      // this.#persist.append(this.#state.sink);
       this.#state.flush();
     } finally {
       // TODO: error handling?

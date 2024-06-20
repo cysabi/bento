@@ -1,10 +1,7 @@
 import { defineConfig } from "vite";
-import preact from "@preact/preset-vite";
 import tailwindcss from "@tailwindcss/vite";
+import solid from "vite-plugin-solid";
 
 export default defineConfig({
-  build: {
-    sourcemap: true,
-  },
-  plugins: [tailwindcss(), preact()],
+  plugins: [solid(), tailwindcss()],
 });

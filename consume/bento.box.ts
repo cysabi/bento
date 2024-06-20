@@ -1,53 +1,55 @@
 import bento from "bento";
+import { readdir } from "node:fs/promises";
+import { watch } from "fs";
+import { join } from "path";
+import { consola } from "consola";
 
 let countdown: Timer | null = null;
 
 type State = {
-  obs: any;
-  flavorText: string;
-  nextMatch: null | number;
-  scoreboard: { name: string; score: number }[];
+  files: { name: string; data: ArrayBuffer; type: string }[];
 };
 
-export default bento.box<State>({
-  obs: {
-    scene: null,
-  },
-  flavorText: "thingy",
-  nextMatch: null,
-  scoreboard: [
-    {
-      name: "apple",
-      score: 1,
-    },
-    {
-      name: "banana",
-      score: 2,
-    },
-  ],
-  setObsScene(set, payload: string) {
-    set((state) => {
-      state.obs.scene = payload;
-    });
-  },
-  setCount(set, payload: number | null) {
-    if (countdown) clearInterval(countdown);
-    set((state) => {
-      state.nextMatch = payload;
-    });
-    countdown = setInterval(() => {
+function shuffle(array: any[]) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
+
+bento.box<State>(
+  {
+    files: [],
+    setFiles: async (set, payload) => {
       set((state) => {
-        if (state.nextMatch) {
-          state.nextMatch -= 1;
-        } else if (countdown) {
-          clearInterval(countdown);
+        if (!state.files.length) {
+          consola.box(`Serving at http://localhost:4400`);
         }
+        state.files = payload;
+        consola.success(` Found ${payload.length} files!`);
       });
-    }, 1000);
+    },
   },
-  updateScore(set, payload) {
-    set((state) => {
-      state.scoreboard[0].score -= 1;
-    });
-  },
-});
+  (act) => {
+    const dir = join(process.cwd(), "art");
+    const syncFiles = async () => {
+      const paths = await readdir(dir);
+      const files = await Promise.all(
+        paths.map(async (path) => {
+          const file = Bun.file(join(dir, path));
+          return {
+            name: file.name?.split("/")?.at(-1)?.split(".")?.at(0),
+            type: file.type,
+            data: await file.arrayBuffer(),
+          };
+        })
+      );
+      act("setFiles", shuffle(files));
+    };
+    watch(dir, syncFiles);
+    syncFiles();
+  }
+);

@@ -13,7 +13,7 @@ export class Client<S> {
   constructor({ scopes, initial }: { scopes?: string[][]; initial?: S } = {}) {
     this.#state = icepick.freeze(initial || ({} as S));
 
-    this.#ws = new WebSocket(`ws://${window.location.hostname}:4400/_ws`);
+    this.#ws = new WebSocket(`ws://${window.location.host}/_ws`);
     this.#ws.binaryType = "arraybuffer";
     this.#send({ type: "init", scopes });
     this.#ws.addEventListener("message", (event) => {

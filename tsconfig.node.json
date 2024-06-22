@@ -8,5 +8,5 @@
     "allowSyntheticDefaultImports": true,
     "strict": true
   },
-  "include": ["vite.config.ts", "bento.box.ts"]
+  "include": ["vite.config.ts", "index.ts"]
 }

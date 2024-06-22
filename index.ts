@@ -11,4 +11,5 @@ const vite = await createViteServer({
 
 app.use(fromNodeMiddleware(vite.middlewares));
 
-Bun.serve({ fetch: toWebHandler(app) });
+const server = Bun.serve({ fetch: toWebHandler(app) });
+console.log(server.url);

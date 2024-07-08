@@ -1,4 +1,4 @@
-import { Client } from "bento/client";
+import { Client } from "../../bento/src/client";
 import {
   createEffect,
   createMemo,

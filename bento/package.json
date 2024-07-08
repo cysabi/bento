@@ -1,29 +1,29 @@
 {
   "name": "bento",
-  "module": "index.ts",
+  "version": "0.1.0",
+  "module": "./src/index.ts",
   "type": "module",
   "exports": {
-    ".": "./index.ts",
     "./server": "./src/server/index.ts",
     "./client": "./src/client/index.ts"
   },
   "dependencies": {
-    "@types/bun": "latest",
     "@types/icepick": "^2.3.3",
-    "citty": "^0.1.6",
-    "defu": "^6.1.4",
     "h3": "^1.12.0",
     "icepick": "^2.4.0",
+    "listhen": "^1.7.2",
     "lmdb": "^3.0.12",
     "msgpackr": "^1.10.2"
   },
-  "scripts": {
-    "download-lmdb-prebuilds": "download-lmdb-prebuilds"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "bin": {
+    "bento": "./bin.js"
   },
   "devDependencies": {
-    "vite": "^5.3.1"
+    "citty": "^0.1.6",
+    "defu": "^6.1.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"
   }
 }

@@ -44,7 +44,7 @@ export class State<S> {
               }
             }, this.#state);
           }
-        }); // sdfsdfsdf
+        });
       }
     } finally {
       this.#flushing = false;

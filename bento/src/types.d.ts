@@ -1,9 +1,12 @@
 import type { Peer } from "crossws";
 import type { defineWebSocketHandler } from "h3";
 
-export type ServerConfig<S> = {
+export type ServerConfig<S> = S & Actions<S>;
+
+export type Model<S> = {
   state: S;
   actions: Actions<S>;
+  init?: (setter: Setter<S>) => Promise<void> | void;
 };
 
 export type Actions<S> = {

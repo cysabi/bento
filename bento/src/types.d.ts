@@ -1,5 +1,4 @@
-import type { Peer } from "crossws";
-import type { defineWebSocketHandler } from "h3";
+import type { Peer, Hooks } from "crossws";
 
 export type ServerConfig<S> = S & Actions<S>;
 
@@ -29,10 +28,9 @@ export type MessageAction = {
   payload: any;
 };
 export type Emit = {
-  ws: ServerWebSocket;
+  ws: Peer;
   patches?: Patch[];
 };
 
-export type Clients = Map<ServerWebSocket, MessageInit["scopes"]>;
-export type ServerWebSocket = Peer<unknown>;
-export type Handler = Parameters<typeof defineWebSocketHandler>[0];
+export type Clients = Map<Peer, MessageInit["scopes"]>;
+export type WS = Partial<Hooks>;

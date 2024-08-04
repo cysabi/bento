@@ -1,26 +1,14 @@
 import { pack, unpack } from "msgpackr";
-import {
-  createApp,
-  defineEventHandler,
-  defineWebSocketHandler,
-  serveStatic,
-  toNodeListener,
-  toWebHandler,
-  type App,
-} from "h3";
-import wsAdapter from "crossws/adapters/node";
-import { join } from "path";
 import type {
   Message,
   Emit,
   Clients,
-  ServerWebSocket,
   Setter,
   Actions,
   ServerConfig,
   Model,
+  WS,
 } from "../types";
-import { createServer } from "node:http";
 import { State } from "./state";
 import { Persist } from "./persist";
 
@@ -29,7 +17,7 @@ export class Server<S extends Record<string, unknown>> {
   #actions: Actions<S>;
   #persist: Persist<S>;
   #clients: Clients;
-  app: App;
+  ws: WS;
 
   constructor(config: ServerConfig<S>) {
     const model: Model<S> = {
@@ -59,74 +47,35 @@ export class Server<S extends Record<string, unknown>> {
     this.#persist.clear();
     this.#persist.init(this.#state.snap());
 
-    // create app
-    this.app = createApp();
-    this.app.use(
-      "/_ws",
-      defineWebSocketHandler({
-        message: (ws, msg) => {
-          const data: Message = unpack(msg.rawData);
+    // configure ws
+    this.ws = {
+      message: (ws, msg) => {
+        const data: Message = unpack(msg.rawData);
 
-          console.info(`ws ~ message ~ ${JSON.stringify(data)}`);
+        console.info(`ws ~ message ~ ${JSON.stringify(data)}`);
 
-          switch (data.type) {
-            case "init":
-              return this.#handleInit(data.scopes, ws);
-            case "action":
-              return this.#handleAction(data.action, data.payload);
-          }
-        },
-        open: (ws) => {
-          console.info("ws ~ open");
-        },
-        close: (ws) => {
-          console.info("ws ~ close");
-          this.#clients.delete(ws);
-        },
-      })
-    );
-  }
-
-  serve(prod = true) {
-    if (prod) {
-      this.app.use(
-        "/",
-        defineEventHandler((event) =>
-          serveStatic(event, {
-            getContents: (id) => Bun.file(join("dist", id)),
-            getMeta: async (id) => {
-              const file = Bun.file(join("dist", id));
-              if (await file.exists())
-                return { size: file.size, mtime: file.lastModified };
-            },
-          })
-        )
-      );
-    }
-
-    const { handleUpgrade } = wsAdapter(this.app.websocket);
-    const server = createServer(toNodeListener(this.app));
-    server.on("upgrade", handleUpgrade);
-    return server;
-
-    // const handleHttp = toWebHandler(this.app);
-    // return Bun.serve({
-    //   port: process.env["PORT"] || 4400,
-    //   websocket,
-    //   async fetch(req, server) {
-    //     if (await handleUpgrade(req, server)) {
-    //       return;
-    //     }
-    //     return handleHttp(req);
-    //   },
-    // });
+        switch (data.type) {
+          case "init":
+            return this.#handleInit(data.scopes, ws);
+          case "action":
+            return this.#handleAction(data.action, data.payload);
+        }
+      },
+      open: (ws) => {
+        console.info("ws ~ open");
+      },
+      close: (ws) => {
+        console.info("ws ~ close");
+        this.#clients.delete(ws);
+      },
+    };
   }
 
   act(action: string, payload: any) {
     return this.#handleAction(action, payload);
   }
 
-  #handleInit(scopes: string[][], ws: ServerWebSocket) {
+  #handleInit(scopes: string[][], ws: Emit["ws"]) {
     this.#clients.set(ws, scopes || [[]]);
     this.#emit({ ws });
   }

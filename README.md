@@ -1,7 +1,8 @@
 # `bento`
-> hehe ~
 
+### inspirations
 https://github.com/tauri-apps/wry
+https://vingester.app/guide/#/alternatives
 
 ---
 

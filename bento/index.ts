@@ -13,8 +13,12 @@ const box = async <S extends Record<string, unknown>>(
         const success = server.upgrade(req);
         if (!success) return new Response(null, { status: 426 });
       },
-      "/": () => new Response(Bun.file("dist/index.html")),
-      "/*": (req) => new Response(Bun.file("dist" + new URL(req.url).pathname)),
+      "/*": async (req) => {
+        const asset = Bun.file("dist" + new URL(req.url).pathname);
+        if (await asset.exists()) return new Response(asset);
+
+        return new Response(Bun.file("dist/index.html"));
+      },
     },
     websocket: bento.ws,
     development: process.env.NODE_ENV !== "production" && {

@@ -2,7 +2,8 @@
 
 `cd consume`\
 `bun run ./bento.box.ts`\
-`bun x vite`
+`bun x vite`\
+`bun run compile`
 
 ### inspirations
 https://github.com/tauri-apps/wry

@@ -1,5 +1,10 @@
 {
   "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./server": "./src/server/index.ts",
+    "./client": "./src/client/index.ts"
+  },
   "dependencies": {
     "@types/bun": "^1.2.18",
     "@types/icepick": "^2.3.3",

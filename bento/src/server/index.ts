@@ -26,7 +26,6 @@ export class Server<S extends Record<string, unknown>> {
     };
 
     Object.entries(config).forEach(([key, value]) => {
-      // TODO: deep search for an external lib
       if (typeof value === "function") {
         model.actions[key] = value as Actions<S>[keyof Actions<S>];
       } else {

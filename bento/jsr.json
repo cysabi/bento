@@ -1,9 +1,9 @@
 {
   "name": "@cysabi/bento",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "exports": {
-    ".": "./bento/index.ts",
-    "./server": "./src/bento/server/index.ts",
-    "./client": "./src/bento/client/index.ts"
+    ".": "./index.ts",
+    "./server": "./src/server/index.ts",
+    "./client": "./src/client/index.ts"
   }
 }

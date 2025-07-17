@@ -73,7 +73,7 @@ export class Server<S extends Record<string, unknown>> {
   }
 
   act(action: string, payload: any) {
-    return this.#handleAction(action, payload);
+    this.#handleAction(action, payload);
   }
 
   #handleInit(scopes: string[][], ws: Emit["ws"]) {

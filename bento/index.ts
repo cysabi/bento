@@ -3,7 +3,7 @@ import type { ServerConfig } from "./src/types";
 
 const box = async <S extends Record<string, unknown>>(
   state: ServerConfig<S>
-) => {
+): Promise<Bun.Server> => {
   const bento = new Server(state);
 
   // TODO : print something cool to the console

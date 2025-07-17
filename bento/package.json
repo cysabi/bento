@@ -8,8 +8,6 @@
     "msgpackr": "^1.11.4"
   },
   "devDependencies": {
-    "citty": "^0.1.6",
-    "defu": "^6.1.4",
     "prebuildify-ci": "^1.0.5"
   },
   "peerDependencies": {

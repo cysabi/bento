@@ -4,13 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "bun --bun ./bento.box.ts",
     "build": "tsc && vite build",
-    "compile": "bun build --compile --target=bun-windows-x64 ./bento.box.ts --outfile carousel",
+    "compile": "bun build --compile ./bento.box.ts --outfile bento.box",
+    "zip": "zip -r bento.box.zip bento.box.exe dist",
     "preview": "vite preview"
   },
   "dependencies": {
-    "bentocg": "file:../bento",
+    "bento": "../bento/",
     "consola": "^3.2.3",
     "gsap": "^3.12.5",
     "solid-js": "^1.8.17",
@@ -20,7 +21,7 @@
     "@tailwindcss/vite": "^4.0.0-alpha.16",
     "tailwindcss": "^4.0.0-alpha.16",
     "typescript": "^5.4.5",
-    "vite": "^5.3.1",
+    "vite": "^7.0.5",
     "vite-plugin-solid": "^2.10.2"
   }
 }

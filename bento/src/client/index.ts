@@ -2,31 +2,46 @@ import icepick from "icepick";
 import { pack, unpack } from "msgpackr";
 
 export class Client<S> {
-  dispatch: null | ((state: S) => void) = null;
+  #dispatch;
   #state: S;
-  #ws: WebSocket;
+  #ws!: WebSocket;
 
   act(action: string, payload: any) {
     this.#send({ type: "action", action, payload });
   }
 
-  constructor({ scopes, initial }: { scopes?: string[][]; initial?: S } = {}) {
-    this.#state = icepick.freeze(initial || ({} as S));
+  constructor(
+    dispatch: (state: S) => void,
+    options?: Partial<{ scopes: string[][] }>
+  ) {
+    this.#dispatch = dispatch;
+    this.#state = icepick.freeze(undefined as S);
+    this.#ws = this.#connect();
+    this.#send({ type: "init", ...options });
+  }
 
-    this.#ws = new WebSocket(`ws://${window.location.host}/_ws`);
-    this.#ws.binaryType = "arraybuffer";
-    this.#send({ type: "init", scopes });
-    this.#ws.addEventListener("message", (event) => {
+  #connect() {
+    const ws = new WebSocket(`ws://${window.location.hostname}:4400/_ws`);
+    ws.binaryType = "arraybuffer";
+    ws.onmessage = (event) => {
       const data = unpack(event.data);
+      console.info("ws ~ message", data);
 
       switch (data.type) {
         case "emit":
-          return this.#handleEmitted(data);
+          return this.#handleEmit(data);
       }
-    });
+    };
+    ws.onclose = (event) => {
+      console.error("ws ~ close", event.reason, "retrying in 1 second...");
+      setTimeout(() => {
+        this.#connect();
+      }, 1000);
+    };
+    return ws;
   }
 
-  #handleEmitted(data: {
+  #handleEmit(data: {
     type: "emit";
     patches: Array<{ path: string[]; value?: any }>;
   }) {
@@ -39,9 +54,7 @@ export class Client<S> {
         this.#state = icepick.unsetIn(this.#state, patch.path);
       }
     });
-    if (this.dispatch) {
-      this.dispatch(this.#state);
-    }
+    this.#dispatch(this.#state);
   }
 
   async #send(obj: any) {

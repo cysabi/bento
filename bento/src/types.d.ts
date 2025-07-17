@@ -1,6 +1,6 @@
-import type { Peer, Hooks } from "crossws";
-
-export type ServerConfig<S> = S & Actions<S>;
+export type ServerConfig<S> = {
+  [key: string]: S[keyof S] | Actions<S>[keyof S];
+};
 
 export type Model<S> = {
   state: S;
@@ -28,9 +28,9 @@ export type MessageAction = {
   payload: any;
 };
 export type Emit = {
-  ws: Peer;
+  ws: Bun.ServerWebSocket;
   patches?: Patch[];
 };
 
-export type Clients = Map<Peer, MessageInit["scopes"]>;
-export type WS = Partial<Hooks>;
+export type Clients = Map<Bun.ServerWebSocket, MessageInit["scopes"]>;
+export type WS = Bun.WebSocketHandler;

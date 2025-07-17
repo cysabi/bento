@@ -1,7 +1,14 @@
 import bento from "bento";
 
 type State = {
-  files: { name: string; data: ArrayBuffer; type: string }[];
+  name: string;
 };
 
-export default bento.box<State>({ files: [] });
+bento.box<State>({
+  name: "hello world",
+  changeName(set, payload) {
+    set((state) => {
+      state.name = state.name + " " + payload;
+    });
+  },
+});

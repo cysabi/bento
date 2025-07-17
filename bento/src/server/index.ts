@@ -50,7 +50,8 @@ export class Server<S extends Record<string, unknown>> {
     // configure ws
     this.ws = {
       message: (ws, msg) => {
-        const data: Message = unpack(msg.rawData);
+        const data: Message =
+          typeof msg === "string" ? JSON.parse(msg) : unpack(msg);
 
         console.info(`ws ~ message ~ ${JSON.stringify(data)}`);
 
@@ -61,7 +62,7 @@ export class Server<S extends Record<string, unknown>> {
             return this.#handleAction(data.action, data.payload);
         }
       },
-      open: (ws) => {
+      open: (_ws) => {
         console.info("ws ~ open");
       },
       close: (ws) => {

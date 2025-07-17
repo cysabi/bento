@@ -6,7 +6,7 @@ const box = async <S extends Record<string, unknown>>(
 ): Promise<Bun.Server> => {
   const bento = new Server(state);
 
-  return Bun.serve({
+  const server = Bun.serve({
     port: 4400,
     routes: {
       "/_ws": (req, server) => {
@@ -26,6 +26,8 @@ const box = async <S extends Record<string, unknown>>(
       console: true,
     },
   });
+  console.log(server);
+  return server;
 
   //   // // set up vite dev server or vite static
   //   if (false) {

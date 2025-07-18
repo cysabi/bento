@@ -1,7 +1,8 @@
 # `bento`
-> web-based broadcast graphics with bun 
+> an empathy-included framework for making web-based broadcast graphics with bun
 
-A lightweight state server that 
+A simple and lightweight state-machine server that feels as simple as writing a config file, and a compatible client you can use from anywhere.
+
 - Stream minimal and bandwidth-efficient data patches to clients with websockets and msgpack
 - Persist state locally with an embedded lmdb
 - Compile to a standalone binary for portability

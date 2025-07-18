@@ -1,4 +1,5 @@
 import { open } from "lmdb";
+import { resolve } from "node:path";
 
 import type { Patch } from "../types";
 
@@ -8,7 +9,7 @@ export class Persist<S> {
   #db: ReturnType<typeof open<Patch[]>>;
 
   constructor(fp: string) {
-    this.#db = open<Patch[]>(fp, { sharedStructuresKey: STRUCTS_KEY });
+    this.#db = open<Patch[]>(resolve(fp), { sharedStructuresKey: STRUCTS_KEY });
   }
 
   init(value: S) {

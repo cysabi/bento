@@ -8,11 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bento": "../bento/",
-    "solid-js": "^1.8.17"
-  },
-  "devDependencies": {
-    "vite": "^7.0.5",
-    "vite-plugin-solid": "^2.10.2"
+    "bento": "../bento",
+    "solid-js": "^1.9.7",
+    "vite": "^6.0.0",
+    "vite-plugin-solid": "^2.11.7"
   }
 }
